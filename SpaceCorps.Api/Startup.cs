@@ -12,7 +12,9 @@ public class Startup(IConfiguration configuration)
     {
         services.AddControllers();
         services.AddDbContext<SpaceCorpsContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("CustomerContext") ?? throw new InvalidOperationException("Connection string 'CustomerContext' not found.")));
+            options.UseSqlServer(Configuration.GetConnectionString("CustomerContext") ??
+                                 throw new InvalidOperationException(
+                                     "Connection string 'CustomerContext' not found.")));
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -24,10 +26,7 @@ public class Startup(IConfiguration configuration)
 
         app.UseRouting();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-        });
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
         app.UseWebSockets();
 
@@ -51,16 +50,18 @@ public class Startup(IConfiguration configuration)
             }
         });
     }
-    
+
     private static async Task Echo(WebSocket webSocket)
     {
         var buffer = new byte[1024 * 4];
         var result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
         while (!result.CloseStatus.HasValue)
         {
-            await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
+            await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType,
+                result.EndOfMessage, CancellationToken.None);
             result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
         }
+
         await webSocket.CloseAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
     }
 }
