@@ -6,12 +6,6 @@ import './index.css'
 import { routeTree } from './routeTree.gen'
 import {createRouter, RouterProvider} from "@tanstack/react-router";
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
-
-if (!PUBLISHABLE_KEY) {
-    throw new Error('Missing Publishable Key')
-}
-
 // Create a new router instance
 const router = createRouter({ routeTree })
 
